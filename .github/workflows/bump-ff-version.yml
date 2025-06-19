@@ -1,0 +1,21 @@
+name: Bump F!F Version
+
+on:
+  schedule:
+    - cron: '0 5 * * 1' # At 05:00 on Monday.
+  workflow_dispatch:
+    inputs:
+      ff-version-tag:
+        description: 'F!F version tag requested to update in your project to. It has to be after 8.0.1(including).'    
+        required: true
+        default: 'latest'
+
+jobs:
+  bump-ff-version:
+    uses: wearefrank/ci-cd-templates/.github/workflows/ff-version-auto-bumper.yml@2f83b83141c47c3141586b6d6abd5f4bd2dffee7 # 2.0.0
+    secrets:
+      token: ${{ secrets.WEAREFRANK_BOT_PAT }}
+      dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+    with:
+      ff-version-tag: ${{ github.event.inputs.ff-version-tag || 'latest' }}

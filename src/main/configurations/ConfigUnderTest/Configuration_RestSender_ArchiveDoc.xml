@@ -1,0 +1,63 @@
+<Module
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../FrankConfig.xsd">
+    <Adapter
+        name="RestSender_ArchiveDoc">
+        <Receiver>
+            <JavaListener
+                name="RestSender_ArchiveDoc"
+                serviceName="ibis4test-RestSender_ArchiveDoc" />
+        </Receiver>
+        <Pipeline>
+            <Exits>
+                <Exit name="EXIT" state="SUCCESS" />
+            </Exits>
+
+            <FixedResultPipe
+                name="readFile"
+                filename="RestListener/pdf/sample.pdf"
+                storeResultInSessionKey="fileContent">
+                <Forward name="success" path="setFileName" />
+            </FixedResultPipe>
+
+            <PutInSessionPipe
+                name="setFileName"
+                sessionKey="fileContentName"
+                value="sample.pdf">
+                <Forward name="success" path="callRest" />
+            </PutInSessionPipe>
+
+            <SenderPipe
+                name="callRest">
+                <HttpSender
+                    methodType="POST"
+                    url="${web.protocol}://${web.host}:${web.port}${web.contextpath}/rest/doc"
+                    postType="FORMDATA"
+                    sharedResourceRef="SharedHttpSession">
+                    <Param name="key01" value="every cloud has a silver lining" />
+                    <Param name="key02" sessionKey="originalMessage" />
+                    <Param name="file" sessionKey="fileContent" />
+                </HttpSender>
+                <Forward name="success" path="text2Xml" />
+            </SenderPipe>
+
+            <Text2XmlPipe
+                name="text2Xml"
+                xmlTag="id" useCdataSection="false">
+                <Forward name="success" path="writeFile" />
+            </Text2XmlPipe>
+
+            <LocalFileSystemPipe
+                name="writeFile"
+                action="write" filename="${testdata.dir}/rest/id.xml">
+                <Forward name="success" path="text2Xml2" />
+            </LocalFileSystemPipe>
+
+            <Text2XmlPipe
+                name="text2Xml2"
+                xmlTag="filename" useCdataSection="false">
+                <Forward name="success" path="EXIT" />
+            </Text2XmlPipe>
+        </Pipeline>
+    </Adapter>
+</Module>

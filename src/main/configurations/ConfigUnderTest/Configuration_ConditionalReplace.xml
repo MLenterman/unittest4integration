@@ -1,0 +1,46 @@
+<Module
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../FrankConfig.xsd">
+    <Adapter
+        name="ConditionalReplace">
+        <Receiver
+            name="ConditionalReplace">
+            <JavaListener
+                name="ConditionalReplace"
+                serviceName="ConditionalReplace"/>
+        </Receiver>
+
+        <Pipeline>
+            <Exits>
+                <Exit name="EXIT" state="SUCCESS"/>
+                <Exit name="ERROR" state="ERROR"/>
+            </Exits>
+            
+            <XmlIfPipe
+                name="ErrorOnEmptyInput"
+                getInputFromFixedValue="&lt;dummy/&gt;"
+                xpathExpression="string-length($Input) = 0">
+                <Param name="Input" sessionKey="originalMessage"/>
+                <Forward name="then" path="ERROR" />
+                <Forward name="else" path="Continue" />
+            </XmlIfPipe>
+
+            <XmlIfPipe
+                name="ContinueAlphabetWhenInputEqualsAbc"
+                getInputFromFixedValue="&lt;dummy/&gt;"
+                xpathExpression="$Input = 'abc'">
+                <Param name="Input" sessionKey="originalMessage" />
+                <Forward name="then" path="ConcatDefgToInput" />
+                <Forward name="else" path="EXIT" />
+            </XmlIfPipe>
+            
+            <XsltPipe
+                name="ConcatDefgToInput"
+                getInputFromFixedValue="&lt;dummy/&gt;"
+                xpathExpression="concat($Input, 'dfeg')">
+                <Param name="Input" sessionKey="originalMessage" />
+                <Param name="employeeId" sessionKey="employeeId" />
+            </XsltPipe>
+        </Pipeline>
+    </Adapter>
+</Module>

@@ -1,7 +1,9 @@
 <!DOCTYPE Configuration [
-
+	<!ENTITY ConditionalReplace SYSTEM "./Configuration_ConditionalReplace.xml">
+	<!ENTITY RestSender_ArchiveDoc SYSTEM "./Configuration_RestSender_ArchiveDoc.xml">
 	]>
 
 <Configuration name="ConfigUnderTest">
-
+	&ConditionalReplace;
+	&RestSender_ArchiveDoc;
 </Configuration>

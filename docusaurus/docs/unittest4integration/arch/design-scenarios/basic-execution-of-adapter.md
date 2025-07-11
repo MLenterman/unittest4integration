@@ -2,10 +2,7 @@
 sidebar_position: 20
 ---
 
-# Basic Execution Of Adapter
-Adapter should preferably be small and be responsible for a single piece of functionality. In the future there will hopefully be another level of abstraction
-possible that is smaller than an adapter and would encapsulate a "function block". Unit testcases would then primarily be applied on those, while testcase for adapters
-would likely fall under integration tests.
+An adapter should preferably be small and responsible for a single piece of functionality. In the future another level of abstraction, smaller than an adapter, may be introduced to encapsulate a "function block". Unit test cases would then primarily target these function blocks, while adapter test cases would more appropriately fall under integration testing.
 
 ### Text as input and assert that output is a specific text value
 Adapter under test:
